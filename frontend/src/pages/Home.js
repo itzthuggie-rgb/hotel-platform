@@ -10,7 +10,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/hotels?sort=rating').then(res => setFeatured(res.data.slice(0, 3)));
+    axios.get('/api/hotels?sort=rating').then(res => setFeatured(Array.isArray(res.data) ? res.data.slice(0, 3) : []));
   }, []);
 
   const handleSearch = (e) => {
