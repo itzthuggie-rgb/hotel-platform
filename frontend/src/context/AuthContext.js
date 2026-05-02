@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios'; axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+import axios from 'axios';
+
+const API = 'https://hotel-platform-api-oj32.onrender.com';
+axios.defaults.baseURL = API;
 
 const AuthContext = createContext(null);
 
