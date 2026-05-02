@@ -10,17 +10,23 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/hotels?sort=rating').then(res => setFeatured(Array.isArray(res.data) ? res.data.slice(0, 3) : []));
+    axios.get('/api/hotels?sort=rating')
+      .then(res => {
+        const data = res.data;
+        if (Array.isArray(data)) {
+          setFeatured(data.slice(0, 3));
+        }
+      })
+      .catch(err => console.log('Hotels error:', err));
   }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    navigate(`/hotels?search=${search}`);
+    navigate('/hotels?search=' + search);
   };
 
   return (
     <div className="home page">
-      {/* Hero */}
       <section className="hero">
         <div className="hero-overlay" />
         <div className="container hero-content">
@@ -37,7 +43,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats */}
       <section className="stats-bar">
         <div className="container stats-inner">
           <div className="stat"><span className="stat-num">500+</span><span>Hotels</span></div>
@@ -47,7 +52,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured */}
       <section className="featured-section">
         <div className="container">
           <h2>Top Rated Hotels</h2>
@@ -61,7 +65,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories */}
       <section className="categories-section">
         <div className="container">
           <h2>Browse by Category</h2>
@@ -72,7 +75,7 @@ export default function Home() {
               { label: 'Boutique', icon: '🎨', cat: 'boutique' },
               { label: 'Business', icon: '💼', cat: 'business' },
             ].map(c => (
-              <div key={c.cat} className="category-card" onClick={() => navigate(`/hotels?category=${c.cat}`)}>
+              <div key={c.cat} className="category-card" onClick={() => navigate('/hotels?category=' + c.cat)}>
                 <span className="cat-icon">{c.icon}</span>
                 <span>{c.label}</span>
               </div>
@@ -83,7 +86,7 @@ export default function Home() {
 
       <footer className="footer">
         <div className="container">
-          <p>🏨 HotelLink &copy; {new Date().getFullYear()} — All rights reserved.</p>
+          <p>🏨 HotelLink © {new Date().getFullYear()} — All rights reserved.</p>
         </div>
       </footer>
     </div>
