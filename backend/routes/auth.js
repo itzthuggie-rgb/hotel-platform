@@ -28,4 +28,24 @@ router.post('/login', async (req, res) => {
     const user = await db.get_p('SELECT * FROM users WHERE email = ? OR phone = ?', [identifier, identifier]);
     if (!user || !bcrypt.compareSync(password, user.password)) return res.status(401).json({ error: 'Invalid credentials.' });
     const token = jwt.sign({ id: user.id, name: user.name, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, name: user.name, email:
+    res.json({ token, user: { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role } });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.get('/me', auth, async (req, res) => {
+  try {
+    const user = await db.get_p('SELECT id,name,email,phone,role,created_at FROM users WHERE id = ?', [req.user.id]);
+    if (!user) return res.status(404).json({ error: 'User not found.' });
+    res.json(user);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.put('/me', auth, async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    await db.run_p('UPDATE users SET name=?,phone=? WHERE id=?', [name, phone, req.user.id]);
+    res.json({ message: 'Profile updated.' });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+module.exports = router;
